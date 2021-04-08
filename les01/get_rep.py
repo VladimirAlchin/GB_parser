@@ -19,6 +19,6 @@ def get_weather():
     print(f'cite {a["id"]} \nid {a["name"]} \ntemp {a["main"]["temp"]}')
 
 
-# get_repo('VladimirAlchin')
-# test Naberezhnye Chelny
+get_repo('VladimirAlchin')
+# test city Naberezhnye Chelny
 get_weather()
