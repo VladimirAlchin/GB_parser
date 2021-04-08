@@ -8,7 +8,8 @@ def get_repo(name):
         json.dump(req.json(), f)
     print(f'Репозитории пользователя {name}')
     for i in req.json():
-        print(i['name'])
+        print(f'{i["name"]}')
+
 
 
 def get_weather():
@@ -16,7 +17,7 @@ def get_weather():
     api_key = 'cc76ab0d5a9fcf0f6786364eafa6303e'
     req = requests.get(f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric&lang=ru')
     a = req.json()
-    print(f'cite {a["id"]} \nid {a["name"]} \ntemp {a["main"]["temp"]}')
+    print(f'В городе {a["name"]} температура {a["main"]["temp"]} градусов цельсия')
 
 
 get_repo('VladimirAlchin')
