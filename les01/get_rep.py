@@ -14,7 +14,7 @@ def get_repo(name):
 
 def get_weather():
     city = input('Введите название города ')
-    api_key = 'cc76ab0d5a9fcf0f6786364eafa6303e'
+    api_key = ''
     req = requests.get(f'https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric&lang=ru')
     a = req.json()
     print(f'В городе {a["name"]} температура {a["main"]["temp"]} градусов цельсия')
