@@ -2,7 +2,9 @@ import requests
 import json
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
+
 
 def get_repo(name):
     req = requests.get(f'https://api.github.com/users/{name}/repos')
@@ -11,7 +13,6 @@ def get_repo(name):
     print(f'Репозитории пользователя {name}')
     for i in req.json():
         print(f'{i["name"]}')
-
 
 
 def get_weather():
