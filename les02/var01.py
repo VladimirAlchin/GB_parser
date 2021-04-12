@@ -52,12 +52,12 @@ my_hh = GetHH()
 my_hh.load_pickle()
 # print(my_hh.processing())
 for i in my_hh.processing():
-    if len(i.find(attrs={"class": "vacancy-serp-item__sidebar"}).text) == 0:
-        cost = 0
-    else:
-        cost = i.find(attrs={"class": "vacancy-serp-item__sidebar"}).text
+    # if len(i.find(attrs={"class": "vacancy-serp-item__sidebar"}).text) == 0:
+    #     cost = 0
+    # elif i.find(attrs={"class": "vacancy-serp-item__sidebar"}).text.find('от') == 0:
+    #     min_cost = 'нашли'
+    #     cost = i.find(attrs={"class": "vacancy-serp-item__sidebar"}).text
+    # else:
+    #     cost = i.find(attrs={"class": "vacancy-serp-item__sidebar"}).text
+    cost = i.find(attrs={"class": "vacancy-serp-item__sidebar"}).text.replace('\u202f', '').split(' ')
     print(f'Вакансия {i.a.text} , ссылка {i.a["href"]}, зп {cost}')
-
-
-
-
