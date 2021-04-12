@@ -29,8 +29,19 @@ class GetHH():
 
     def processing(self):
         soup = bs(self.answer, "html.parser")
-        item_list = soup.find(attrs={"class": "vacancy-serp-wrapper"})
-        return item_list
+        item_list = soup.find(attrs={"class": "vacancy-serp"})
+        all_class = []
+        for i in item_list.childGenerator():
+            if len(i['class']) > 1:
+                for j in i['class']:
+                    all_class.append(j)
+            else:
+                all_class.append(i['class'][0])
+        unique = []
+        for i in sorted(set(all_class)):
+            if 'vacancy' in i:
+                unique.append(i)
+        return unique
 
     def save_data(self):
         pass
@@ -38,5 +49,7 @@ class GetHH():
 
 my_hh = GetHH()
 my_hh.load_pickle()
-# print(my_hh.load_pickle())
-pprint(my_hh.processing())
+print(my_hh.processing())
+
+
+
