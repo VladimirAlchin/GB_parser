@@ -50,14 +50,25 @@ class GetHH():
 
 my_hh = GetHH()
 my_hh.load_pickle()
-# print(my_hh.processing())
 for i in my_hh.processing():
-    # if len(i.find(attrs={"class": "vacancy-serp-item__sidebar"}).text) == 0:
-    #     cost = 0
-    # elif i.find(attrs={"class": "vacancy-serp-item__sidebar"}).text.find('от') == 0:
-    #     min_cost = 'нашли'
-    #     cost = i.find(attrs={"class": "vacancy-serp-item__sidebar"}).text
-    # else:
-    #     cost = i.find(attrs={"class": "vacancy-serp-item__sidebar"}).text
     cost = i.find(attrs={"class": "vacancy-serp-item__sidebar"}).text.replace('\u202f', '').split(' ')
-    print(f'Вакансия {i.a.text} , ссылка {i.a["href"]}, зп {cost}')
+    if '–' in cost:
+        min_cost = cost[0]
+        max_cost = cost[2]
+        unit = cost[3]
+    elif 'от' in cost:
+        min_cost = cost[1]
+        max_cost = 0
+        unit = cost[2]
+    elif 'до' in cost:
+        min_cost = 0
+        max_cost = cost[1]
+        unit = cost[2]
+    else:
+        min_cost = 0
+        max_cost = 0
+        unit = 0
+
+    print(f'Вакансия {i.a.text} , ссылка {i.a["href"]}, минимум {min_cost} максимум {max_cost} валюта {unit}')
+    cost = i.find(attrs={"class": "vacancy-serp-item__sidebar"}).text.replace('\u202f', '')
+    print(f'Вакансия {i.a.text} , ссылка {i.a["href"]},зп {cost}')
