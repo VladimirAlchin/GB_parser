@@ -41,7 +41,8 @@ class GetHH():
         for i in sorted(set(all_class)):
             if 'vacancy' in i:
                 unique.append(i)
-        return unique
+        items = soup.findAll(True, {'class': unique})
+        return items
 
     def save_data(self):
         pass
@@ -49,7 +50,14 @@ class GetHH():
 
 my_hh = GetHH()
 my_hh.load_pickle()
-print(my_hh.processing())
+# print(my_hh.processing())
+for i in my_hh.processing():
+    if len(i.find(attrs={"class": "vacancy-serp-item__sidebar"}).text) == 0:
+        cost = 0
+    else:
+        cost = i.find(attrs={"class": "vacancy-serp-item__sidebar"}).text
+    print(f'Вакансия {i.a.text} , ссылка {i.a["href"]}, зп {cost}')
+
 
 
 
