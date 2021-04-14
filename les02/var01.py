@@ -69,7 +69,7 @@ class GetHH:
                     min_cost = 0
                     max_cost = 0
                     unit = 0
-                result_data.append(dict(zip(['Вакансия', 'Зарплата_нижний_порог', 'Зарплата_нижний_порог',
+                result_data.append(dict(zip(['Вакансия', 'Зарплата_нижний_порог', 'Зарплата_верхний_порог',
                                              'Валюта', 'Ссылка', 'Сайт'],
                                             [i.a.text, min_cost, max_cost, unit, i.a["href"], self.portal])))
             try:
