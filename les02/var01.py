@@ -13,13 +13,14 @@ param = {
     'salary': '',
     'st': 'searchVacancy',
     'text': 'python',
-    'page': ''
+    'page': 0
 }
 
 url_search = 'https://hh.ru/search/vacancy?'
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
                          '(KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36'}
 
+param['text'] = input(f'Введите искомую работу: ')
 
 class GetHH:
     def __init__(self, name,  url, header, param):
@@ -84,8 +85,8 @@ class GetHH:
                                              max_cost, unit, i.a["href"], self.portal])))
             try:
                 next_page = soup.find('a', {"data-qa": "pager-next"})['href']
-                link = 'https://hh.ru' + next_page
-                self.get_data(str(link), self.headers)
+                self.param['page'] += 1
+                self.get_data(self.url_search, self.headers, self.param)
                 time.sleep(0.5)
             except TypeError:
                 break
@@ -100,7 +101,7 @@ class GetHH:
 
 my_hh = GetHH('хехе.ру',  url_search, headers, param)
 print(my_hh.get_data(url_search, headers, param))
-# my_hh.processing()
-# my_hh.save_data()
+my_hh.processing()
+my_hh.save_data()
 
 #     print(f'Вакансия {i.a.text} , ссылка {i.a["href"]}, минимум {min_cost} максимум {max_cost} валюта {unit}')
