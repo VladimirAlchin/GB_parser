@@ -100,7 +100,6 @@ class GetHH:
 
 
 my_hh = GetHH('хехе.ру',  url_search, headers, param)
-print(my_hh.get_data(url_search, headers, param))
 my_hh.processing()
 my_hh.save_data()
 
