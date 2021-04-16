@@ -5,9 +5,18 @@ import pickle
 import json
 import time
 
-# url_search = 'https://hh.ru/search/vacancy?area=1&fromSearchLine=true&st=searchVacancy&text=Python&from=suggest_post'
-url_search = 'https://hh.ru/search/vacancy?clusters=true&area=1&ored_clusters=true&enable_snippets' \
-             '=true&salary=&st=searchVacancy&text=python'
+param = {
+    'clusters': 'True',
+    'area': '1',
+    'ored_clusters': 'true',
+    'enable_snippets': 'true',
+    'salary': '',
+    'st': 'searchVacancy',
+    'text': 'python',
+    'page': ''
+}
+
+url_search = 'https://hh.ru/search/vacancy?'
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
                          '(KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36'}
 
@@ -29,14 +38,14 @@ class GetHH:
             self.answer = pickle.load(f)
             return self.answer
 
-    def get_data(self, url, header):
-        self.answer = rs.get(url, headers=header)
-        # self.save_pickle(self.answer.text)
+    def get_data(self, url, header, param):
+        self.answer = rs.get(url, headers=header, params=param)
+        return self.answer.url
 
     def processing(self):
         var_exit = 0
         result_data = []
-        while 1 > 0:
+        while True:
             soup = bs(self.answer.text, "html.parser")
             item_list = soup.find(attrs={"class": "vacancy-serp"})
             all_class = []
@@ -69,15 +78,15 @@ class GetHH:
                     min_cost = 0
                     max_cost = 0
                     unit = 0
-                result_data.append(dict(zip(['id','Вакансия', 'Зарплата_нижний_порог', 'Зарплата_верхний_порог',
+                result_data.append(dict(zip(['id', 'Вакансия', 'Зарплата_нижний_порог', 'Зарплата_верхний_порог',
                                              'Валюта', 'Ссылка', 'Сайт'],
                                             [i.a["href"].split('/')[4], i.a.text, min_cost,
                                              max_cost, unit, i.a["href"], self.portal])))
             try:
                 next_page = soup.find('a', {"data-qa": "pager-next"})['href']
                 var_exit += 1
-                txt = 'https://hh.ru' + next_page
-                self.get_data(str(txt), self.headers)
+                link = 'https://hh.ru' + next_page
+                self.get_data(str(link), self.headers)
                 time.sleep(0.5)
             except TypeError:
                 break
@@ -91,9 +100,8 @@ class GetHH:
 
 
 my_hh = GetHH('хехе.ру')
-my_hh.get_data(url_search, headers)
-my_hh.processing()
-my_hh.save_data()
-
+print(my_hh.get_data(url_search, headers, param))
+# my_hh.processing()
+# my_hh.save_data()
 
 #     print(f'Вакансия {i.a.text} , ссылка {i.a["href"]}, минимум {min_cost} максимум {max_cost} валюта {unit}')
