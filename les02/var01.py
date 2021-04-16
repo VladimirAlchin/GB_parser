@@ -22,9 +22,10 @@ headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
 
 
 class GetHH:
-    def __init__(self, name):
-        self.headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
-                                      '(KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36'}
+    def __init__(self, name,  url, header, param):
+        self.param = param
+        self.headers = header
+        self.url_search = url
         self.answer = ''
         self.result = ''
         self.portal = name
@@ -43,7 +44,6 @@ class GetHH:
         return self.answer.url
 
     def processing(self):
-        var_exit = 0
         result_data = []
         while True:
             soup = bs(self.answer.text, "html.parser")
@@ -84,7 +84,6 @@ class GetHH:
                                              max_cost, unit, i.a["href"], self.portal])))
             try:
                 next_page = soup.find('a', {"data-qa": "pager-next"})['href']
-                var_exit += 1
                 link = 'https://hh.ru' + next_page
                 self.get_data(str(link), self.headers)
                 time.sleep(0.5)
@@ -99,7 +98,7 @@ class GetHH:
             fa.write(self.result)
 
 
-my_hh = GetHH('хехе.ру')
+my_hh = GetHH('хехе.ру',  url_search, headers, param)
 print(my_hh.get_data(url_search, headers, param))
 # my_hh.processing()
 # my_hh.save_data()
