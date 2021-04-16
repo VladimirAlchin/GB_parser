@@ -69,9 +69,10 @@ class GetHH:
                     min_cost = 0
                     max_cost = 0
                     unit = 0
-                result_data.append(dict(zip(['Вакансия', 'Зарплата_нижний_порог', 'Зарплата_верхний_порог',
+                result_data.append(dict(zip(['id','Вакансия', 'Зарплата_нижний_порог', 'Зарплата_верхний_порог',
                                              'Валюта', 'Ссылка', 'Сайт'],
-                                            [i.a.text, min_cost, max_cost, unit, i.a["href"], self.portal])))
+                                            [i.a["href"].split('/')[4], i.a.text, min_cost,
+                                             max_cost, unit, i.a["href"], self.portal])))
             try:
                 next_page = soup.find('a', {"data-qa": "pager-next"})['href']
                 var_exit += 1
