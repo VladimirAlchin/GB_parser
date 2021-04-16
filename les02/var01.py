@@ -104,4 +104,3 @@ print(my_hh.get_data(url_search, headers, param))
 my_hh.processing()
 my_hh.save_data()
 
-#     print(f'Вакансия {i.a.text} , ссылка {i.a["href"]}, минимум {min_cost} максимум {max_cost} валюта {unit}')
