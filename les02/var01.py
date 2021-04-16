@@ -21,15 +21,18 @@ headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
                          '(KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36'}
 
 param['text'] = input(f'Введите искомую работу: ')
+max_page = int(input(f'Введите количество страниц для сбора от 1 до 40 :')) - 1
+
 
 class GetHH:
-    def __init__(self, name,  url, header, param):
+    def __init__(self, name, url, header, param, max_page):
         self.param = param
         self.headers = header
         self.url_search = url
         self.answer = ''
         self.result = ''
         self.portal = name
+        self.max_page = max_page
 
     def save_pickle(self, data):
         with open('hh.pcl', 'wb') as f:
@@ -42,11 +45,12 @@ class GetHH:
 
     def get_data(self, url, header, param):
         self.answer = rs.get(url, headers=header, params=param)
-        return self.answer.url
+        return self.answer
 
     def processing(self):
+        self.get_data(self.url_search, self.headers, self.param)
         result_data = []
-        while True:
+        while int(self.param['page']) <= self.max_page:
             soup = bs(self.answer.text, "html.parser")
             item_list = soup.find(attrs={"class": "vacancy-serp"})
             all_class = []
@@ -99,7 +103,6 @@ class GetHH:
             fa.write(self.result)
 
 
-my_hh = GetHH('хехе.ру',  url_search, headers, param)
-my_hh.processing()
+my_hh = GetHH('хехе.ру', url_search, headers, param, max_page)
+print(my_hh.processing())
 my_hh.save_data()
-
