@@ -1,27 +1,28 @@
-from pprint import pprint
 from bs4 import BeautifulSoup as bs
 import requests as rs
 import pickle
 import json
 import time
 
-param = {
-    'clusters': 'True',
-    'area': '1',
-    'ored_clusters': 'true',
-    'enable_snippets': 'true',
-    'salary': '',
-    'st': 'searchVacancy',
-    'text': 'python',
-    'page': 0
-}
 
-url_search = 'https://hh.ru/search/vacancy?'
-headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
-                         '(KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36'}
+def variable():
+    param = {
+        'clusters': 'True',
+        'area': '1',
+        'ored_clusters': 'true',
+        'enable_snippets': 'true',
+        'salary': '',
+        'st': 'searchVacancy',
+        'text': 'python',
+        'page': 0
+    }
+    url_search = 'https://hh.ru/search/vacancy?'
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                             '(KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36'}
 
-param['text'] = input(f'Введите искомую работу: ')
-max_page = int(input(f'Введите количество страниц для сбора от 1 до 40 :')) - 1
+    param['text'] = input(f'Введите искомую работу: ')
+    max_page = int(input(f'Введите количество страниц для сбора от 1 до 40 : ')) - 1
+    return url_search, headers, param, max_page
 
 
 class GetHH:
@@ -85,8 +86,8 @@ class GetHH:
                     unit = 0
                 result_data.append(dict(zip(['id', 'Вакансия', 'Зарплата_нижний_порог', 'Зарплата_верхний_порог',
                                              'Валюта', 'Ссылка', 'Сайт'],
-                                            [i.a["href"].split('/')[4], i.a.text, min_cost,
-                                             max_cost, unit, i.a["href"], self.portal])))
+                                            [i.a["href"].split('/')[4], i.a.text, float(min_cost),
+                                             float(max_cost), unit, i.a["href"], self.portal])))
             try:
                 next_page = soup.find('a', {"data-qa": "pager-next"})['href']
                 self.param['page'] += 1
@@ -103,6 +104,13 @@ class GetHH:
             fa.write(self.result)
 
 
-my_hh = GetHH('хехе.ру', url_search, headers, param, max_page)
-print(my_hh.processing())
-my_hh.save_data()
+def start():
+    param = variable()
+    my_hh = GetHH('хехе.ру', param[0], param[1], param[2], param[3])
+    # для сохранения данных в файл расскоменировать эту строку
+    # my_hh.save_data()
+    return my_hh.processing()
+
+
+
+
