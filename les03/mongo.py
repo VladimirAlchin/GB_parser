@@ -16,28 +16,39 @@ def load_to_db(collection):
 
 
 def vac(min_cost=0, max_cost=0):
-    # вывод всех значений в коллекции
+    # вывод значений без зп
     if min_cost == max_cost and min_cost == 0:
-        all_docs = create_con().find({})
-        return all_docs
+        print(1)
+        for i in create_con().find({'Зарплата_нижний_порог': {'$eq': min_cost},
+                                    'Зарплата_верхний_порог': {'$eq': max_cost}}):
+            print(i)
+        return print('Вывод окончен')
     # если ввели не правильную пару
-    elif min_cost >= max_cost and min_cost != 0:
+    elif min_cost > max_cost and max_cost != 0:
+        print(2)
         return print('Вы ввели не правильную пару значений')
     # вывод значение с минимальной зарплатой больше или равной минимальной ставки
     elif min_cost >= max_cost and max_cost == 0:
-        for i in create_con().find({'Зарплата_нижний_порог': {'gte': min_cost}}):
+        print(3)
+        for i in create_con().find({'Зарплата_нижний_порог': {'$gte': min_cost}}):
             pprint(i)
         return print('Вывод окончен')
+    # вывод всех значений
+    elif min_cost == -1:
+        print(4)
+        for i in create_con().find({}):
+            print(i)
+        return print('Вывод окончен')
+    else:
+        print(5)
+        # вывод по условию больше или равно нижнему порогу и меньше или равно верхнему
+        for i in create_con().find({"$and": [{'Зарплата_нижний_порог': {'$gte': min_cost}},
+                                             {'Зарплата_верхний_порог': {'$lte': max_cost}}]}):
+            pprint(i)
+    return print('Вывод окончен')
 
-    for i in create_con().find({'Зарплата_нижний_порог': {'gte': min_cost, 'lte': max_cost}}):
-        pprint(i)
 
-
-for i in create_con().find({'Зарплата_нижний_порог': {'$gte': 10000, '$lte': ''}}):
-    pprint(i)
-
-# for i in db.hh.find({"Зарплата_нижний_порог": {'$gt': 100000}}):
-#     pprint(i)
+vac(0, 0)
 
 # удаление всех элементов коллекции
 # collection.delete_many({})
