@@ -107,7 +107,7 @@ class GetHH:
 def start():
     param = variable()
     my_hh = GetHH('хехе.ру', param[0], param[1], param[2], param[3])
-    # для сохранения данных в файл расскоменировать эту строку
+    # для сохранения данных в файл эту строку
     # my_hh.save_data()
     return my_hh.processing()
 

@@ -10,9 +10,25 @@ def create_con():
     collection = db.hh
     return collection
 
+
 # вызов функции со второго урока для сбора данных и загрузки в монгу
 def load_to_db(collection):
     collection.insert_many(json.loads(v.start()))
+
+
+# будущая функция выбора новых значений для добавления
+def load_to_db_new(collection):
+    a = json.loads(v.start())
+    load_list = []
+    for i in a:
+        load_list.append(i['id'])
+    #     150 и 2 дубликата
+    for i in create_con().find({'id': {'$in': load_list}}):
+        load_list.remove(i['id'])
+    for i in a:
+        if i['id'] in load_list:
+            collection.insert_one(json.loads(json.dumps(i)))
+
 
 
 def vac(min_cost=0, max_cost=0):
@@ -46,7 +62,8 @@ def vac(min_cost=0, max_cost=0):
     return print('Вывод окончен')
 
 
-vac(0, 45000)
+# vac(0, 45000)
+load_to_db_new(create_con())
 
 # удаление всех элементов коллекции
 # collection.delete_many({})
