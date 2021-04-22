@@ -75,7 +75,7 @@ def get_mail(url, headers):
 url_lenta = 'https://lenta.ru/'
 
 
-def get_lenta():
+def get_lenta(url_lenta, headers):
     r = requests.get(url_lenta, headers=headers)
     r_html = html.fromstring(r.text)
     xpath_row = '//div[contains(@class, "b-yellow-box__wrap")]/div[contains(@class, "item")]'
@@ -103,3 +103,14 @@ def create_con():
     db = client['gb_parser']
     collection = db.news
     return collection
+
+
+def load_data(col, data_list):
+    for i in data_list:
+        col.update_one({"$and": [{'url_search': {"$eq": i['url_search']}},
+                                 {'news_id': {"$eq": i['news_id']}}]},
+                       {'$set': i}, upsert=True
+
+                       )
+
+load_data(create_con(), get_lenta(url_lenta, headers))
