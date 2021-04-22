@@ -68,3 +68,7 @@ def get_mail(url, headers):
         result_list.append(dir_news)
         time.sleep(1)
     return result_list
+
+
+url_lenta = ''
+
