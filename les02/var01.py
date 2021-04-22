@@ -1,24 +1,39 @@
-from pprint import pprint
 from bs4 import BeautifulSoup as bs
 import requests as rs
 import pickle
 import json
 import time
 
-# url_search = 'https://hh.ru/search/vacancy?area=1&fromSearchLine=true&st=searchVacancy&text=Python&from=suggest_post'
-url_search = 'https://hh.ru/search/vacancy?clusters=true&area=1&ored_clusters=true&enable_snippets' \
-             '=true&salary=&st=searchVacancy&text=python'
-headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
-                         '(KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36'}
+
+def variable():
+    param = {
+        'clusters': 'True',
+        'area': '1',
+        'ored_clusters': 'true',
+        'enable_snippets': 'true',
+        'salary': '',
+        'st': 'searchVacancy',
+        'text': 'python',
+        'page': 0
+    }
+    url_search = 'https://hh.ru/search/vacancy?'
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+                             '(KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36'}
+
+    param['text'] = input(f'Введите искомую работу: ')
+    max_page = int(input(f'Введите количество страниц для сбора от 1 до 40 : ')) - 1
+    return url_search, headers, param, max_page
 
 
 class GetHH:
-    def __init__(self, name):
-        self.headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
-                                      '(KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36'}
+    def __init__(self, name, url, header, param, max_page):
+        self.param = param
+        self.headers = header
+        self.url_search = url
         self.answer = ''
         self.result = ''
         self.portal = name
+        self.max_page = max_page
 
     def save_pickle(self, data):
         with open('hh.pcl', 'wb') as f:
@@ -29,14 +44,14 @@ class GetHH:
             self.answer = pickle.load(f)
             return self.answer
 
-    def get_data(self, url, header):
-        self.answer = rs.get(url, headers=header)
-        # self.save_pickle(self.answer.text)
+    def get_data(self, url, header, param):
+        self.answer = rs.get(url, headers=header, params=param)
+        return self.answer
 
     def processing(self):
-        var_exit = 0
+        self.get_data(self.url_search, self.headers, self.param)
         result_data = []
-        while 1 > 0:
+        while int(self.param['page']) <= self.max_page:
             soup = bs(self.answer.text, "html.parser")
             item_list = soup.find(attrs={"class": "vacancy-serp"})
             all_class = []
@@ -69,14 +84,14 @@ class GetHH:
                     min_cost = 0
                     max_cost = 0
                     unit = 0
-                result_data.append(dict(zip(['Вакансия', 'Зарплата_нижний_порог', 'Зарплата_верхний_порог',
+                result_data.append(dict(zip(['id', 'Вакансия', 'Зарплата_нижний_порог', 'Зарплата_верхний_порог',
                                              'Валюта', 'Ссылка', 'Сайт'],
-                                            [i.a.text, min_cost, max_cost, unit, i.a["href"], self.portal])))
+                                            [i.a["href"].split('/')[4], i.a.text, float(min_cost),
+                                             float(max_cost), unit, i.a["href"], self.portal])))
             try:
                 next_page = soup.find('a', {"data-qa": "pager-next"})['href']
-                var_exit += 1
-                txt = 'https://hh.ru' + next_page
-                self.get_data(str(txt), self.headers)
+                self.param['page'] += 1
+                self.get_data(self.url_search, self.headers, self.param)
                 time.sleep(0.5)
             except TypeError:
                 break
@@ -89,10 +104,13 @@ class GetHH:
             fa.write(self.result)
 
 
-my_hh = GetHH('хехе.ру')
-my_hh.get_data(url_search, headers)
-my_hh.processing()
-my_hh.save_data()
+def start():
+    param = variable()
+    my_hh = GetHH('хехе.ру', param[0], param[1], param[2], param[3])
+    # для сохранения данных в файл эту строку
+    # my_hh.save_data()
+    return my_hh.processing()
 
 
-#     print(f'Вакансия {i.a.text} , ссылка {i.a["href"]}, минимум {min_cost} максимум {max_cost} валюта {unit}')
+
+
