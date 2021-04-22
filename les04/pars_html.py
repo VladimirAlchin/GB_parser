@@ -1,5 +1,7 @@
 import datetime
 from pprint import pprint
+from pymongo import MongoClient
+from pprint import pprint
 from lxml import html
 import requests
 import time
@@ -34,7 +36,7 @@ def get_ya(url, headers):
     return result_list
 
 
-# print(get_ya(url_ya, headers))
+print(get_ya(url_ya, headers))
 
 url_mail = 'https://news.mail.ru/'
 
@@ -71,23 +73,33 @@ def get_mail(url, headers):
 
 
 url_lenta = 'https://lenta.ru/'
-r = requests.get(url_lenta, headers=headers)
-r_html = html.fromstring(r.text)
-xpath_row = '//div[contains(@class, "b-yellow-box__wrap")]/div[contains(@class, "item")]'
-div_list = r_html.xpath(xpath_row)
-result_list = []
-for i in div_list:
-    txt_h2 = './a/text()'
-    url_news = './a/@href'
-    source_text = './/a/span/text()'
-    news_time = '//span//@datetime'
-    dir_news = {}
-    dir_news['create_at'] = datetime.datetime.now().isoformat()
-    dir_news['url_search'] = url_lenta
-    dir_news['text'] = i.xpath(txt_h2)[0].replace('\xa0', ' ')
-    # dir_news['url'] = i.xpath(url_news)[0]
-    # dir_news['news_id'] = dir_news['url'].split('=')[-1]
-    # dir_news['source'] = i.xpath(source_text)
-    # dir_news['time'] = i.xpath(news_time)[0]
-    print(dir_news)
 
+
+def get_lenta():
+    r = requests.get(url_lenta, headers=headers)
+    r_html = html.fromstring(r.text)
+    xpath_row = '//div[contains(@class, "b-yellow-box__wrap")]/div[contains(@class, "item")]'
+    div_list = r_html.xpath(xpath_row)
+    result_list = []
+    for i in div_list:
+        txt_h2 = './a/text()'
+        url_news = './a/@href'
+        news_time = '//time/@datetime'
+        dir_news = {}
+        dir_news['create_at'] = datetime.datetime.now().isoformat()
+        dir_news['url_search'] = url_lenta
+        dir_news['text'] = i.xpath(txt_h2)[0].replace('\xa0', ' ')
+        dir_news['url'] = dir_news['url_search'] + i.xpath(url_news)[0]
+        dir_news['news_id'] = i.xpath(url_news)[0]
+        dir_news['source'] = 'lenta'
+        dir_news['time'] = i.xpath(news_time)[0]
+        print(dir_news)
+        time.sleep(1)
+    return result_list
+
+
+def create_con():
+    client = MongoClient('localhost', 27017)
+    db = client['gb_parser']
+    collection = db.news
+    return collection
