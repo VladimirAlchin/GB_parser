@@ -1,7 +1,7 @@
 import datetime
+import json
 from pprint import pprint
 from pymongo import MongoClient
-from pprint import pprint
 from lxml import html
 import requests
 import time
@@ -36,7 +36,7 @@ def get_ya(url, headers):
     return result_list
 
 
-print(get_ya(url_ya, headers))
+# print(get_ya(url_ya, headers))
 
 url_mail = 'https://news.mail.ru/'
 
@@ -93,7 +93,6 @@ def get_lenta(url_lenta, headers):
         dir_news['news_id'] = i.xpath(url_news)[0]
         dir_news['source'] = 'lenta'
         dir_news['time'] = i.xpath(news_time)[0]
-        print(dir_news)
         time.sleep(1)
     return result_list
 
@@ -106,11 +105,9 @@ def create_con():
 
 
 def load_data(col, data_list):
+    print(col)
     for i in data_list:
-        col.update_one({"$and": [{'url_search': {"$eq": i['url_search']}},
-                                 {'news_id': {"$eq": i['news_id']}}]},
-                       {'$set': i}, upsert=True
+        print(i)
 
-                       )
 
-load_data(create_con(), get_lenta(url_lenta, headers))
+load_data(create_con(), get_ya(url_ya, headers))
