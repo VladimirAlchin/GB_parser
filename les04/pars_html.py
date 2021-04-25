@@ -29,7 +29,7 @@ def get_ya(url, headers):
         dir_news['text'] = i.xpath(txt_h2)[0].replace('\xa0', ' ')
         dir_news['url'] = i.xpath(url_news)[0]
         dir_news['news_id'] = dir_news['url'].split('=')[-1]
-        dir_news['source'] = i.xpath(source_text)
+        dir_news['source'] = i.xpath(source_text)[0]
         dir_news['time'] = i.xpath(news_time)[0]
         result_list.append(dir_news)
         time.sleep(1)
@@ -72,7 +72,7 @@ def get_mail(url, headers):
     return result_list
 
 
-url_lenta = 'https://lenta.ru/'
+url_lenta = 'https://lenta.ru'
 
 
 def get_lenta(url_lenta, headers):
@@ -93,6 +93,7 @@ def get_lenta(url_lenta, headers):
         dir_news['news_id'] = i.xpath(url_news)[0]
         dir_news['source'] = 'lenta'
         dir_news['time'] = i.xpath(news_time)[0]
+        result_list.append(dir_news)
         time.sleep(1)
     return result_list
 
@@ -105,7 +106,11 @@ def create_con():
 
 
 def load_data(col, data_list):
-    col.insert_many(data_list)
+    for i in data_list:
+        col.update_one({"$and": [{'url_search': str(i['url_search'])},
+                                 {'news_id': i['news_id']}]},
+                       {"$set": i},
+                       upsert=True)
 
-# TODO: Доделать загрузку уникальных значений
-load_data(create_con(), get_ya(url_ya, headers))
+
+load_data(create_con(), get_lenta(url_lenta, headers))
