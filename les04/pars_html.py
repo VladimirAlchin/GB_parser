@@ -107,5 +107,5 @@ def create_con():
 def load_data(col, data_list):
     col.insert_many(data_list)
 
-
+# TODO: Доделать загрузку уникальных значений
 load_data(create_con(), get_ya(url_ya, headers))
