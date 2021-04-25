@@ -13,7 +13,7 @@ from selenium.webdriver.common.keys import Keys
 load_dotenv()
 url_hw = "https://vk.com/tokyofashion"
 search_text = 'модель'
-xpath_main = "//div[@id='page_search_posts']/div[contains(@id, 'post-')]"
+xpath_main = "//div[contains(@class,'_post ')]"
 
 driver = webdriver.Chrome(os.getenv('DRIVER_PATH_CHROME'))
 driver.get(url_hw)
@@ -26,12 +26,10 @@ field_search_text = driver.find_element_by_class_name('ui_search_field')
 time.sleep(4)
 field_search_text.send_keys(search_text + Keys.ENTER)
 
-items = driver.find_elements_by_xpath(xpath_main)
+items = driver.page_source
+
+with open('f.txt', 'w', encoding='utf-8') as f:
+    f.write(items)
 
 time.sleep(4)
 driver.quit()
-
-print(items)
-
-
-print(1)
