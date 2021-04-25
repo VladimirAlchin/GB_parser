@@ -105,9 +105,7 @@ def create_con():
 
 
 def load_data(col, data_list):
-    print(col)
-    for i in data_list:
-        print(i)
+    col.insert_many(data_list)
 
 
 load_data(create_con(), get_ya(url_ya, headers))
