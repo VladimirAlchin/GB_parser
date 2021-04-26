@@ -27,9 +27,32 @@ time.sleep(4)
 field_search_text.send_keys(search_text + Keys.ENTER)
 
 items = driver.page_source
+print(len(items))
+while True:
+    time.sleep(2)
+    try:
+        button = driver.find_element_by_class_name('JoinForm__notNow')
+        if button:
+            button.click()
+    finally:
+        # b2 = driver.find_element_by_class_name('flat_button')
+        # if b2:
+        #     b2.click()
+        field_search.send_keys(Keys.PAGE_DOWN)
+        time.sleep(0.25)
+        field_search.send_keys(Keys.PAGE_DOWN)
+        time.sleep(0.25)
+        field_search.send_keys(Keys.PAGE_DOWN)
+        time.sleep(4)
+        # if len(items) > len(driver.page_source):
+        #     items = driver.page_source
+        # else:
+        #     break
 
-with open('f.txt', 'w', encoding='utf-8') as f:
-    f.write(items)
+print(len(items))
+#
+# with open('f.txt', 'w', encoding='utf-8') as f:
+#     f.write(items)
 
 time.sleep(4)
 driver.quit()
