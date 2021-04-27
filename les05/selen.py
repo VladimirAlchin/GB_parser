@@ -1,18 +1,17 @@
-import json
+
 import os
 import time
-from lxml import html
-import requests
 from pymongo import MongoClient
 from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from bs4 import BeautifulSoup as bs
 
-# путь к ядру C:\Users\Vladi\Downloads\chromedriver_win32
 
+# загружаем данные для поиска
 load_dotenv()
 url_hw = "https://vk.com/tokyofashion"
+# искомое слово
 search_text = 'модель'
 xpath_main = "//div[contains(@class,'_post ')]"
 
@@ -22,21 +21,24 @@ field_search = driver.find_element_by_class_name('ui_tab_search')
 
 time.sleep(1)
 field_search.click()
-
+# вводим искомое слово и ищем
 field_search_text = driver.find_element_by_class_name('ui_search_field')
 time.sleep(4)
 field_search_text.send_keys(search_text + Keys.ENTER)
 
+# получаем длину страницы для отслеживания
 items = driver.page_source
 print(len(items))
 while True:
     try:
+        # закрываем окно
         button = driver.find_element_by_class_name('JoinForm__notNow')
         if button:
             button.click()
     except:
         pass
     finally:
+        # скролим
         field_search.send_keys(Keys.END)
         time.sleep(3)
         if len(items) < len(driver.page_source):
@@ -46,13 +48,13 @@ while True:
             break
 
 print(len(items))
-
-# with open('f.txt', 'w', encoding='utf-8') as f:
-#     f.write(items)
-
+# строка для выгрузки данных в файл
+with open('f.txt', 'w', encoding='utf-8') as f:
+    f.write(items)
+# закрываем окно и приступаем к обработке
 time.sleep(4)
 driver.quit()
-
+# парсим с помощью бс
 soup = bs(items, "lxml")
 item_list = soup.find_all("div", {"class": "_post"})
 result_list = []
@@ -99,5 +101,5 @@ def create_con():
 def load_data(col, data_list):
     col.insert_many(data_list)
 
-
+# загружаем в монгу
 load_data(create_con(), result_list)
